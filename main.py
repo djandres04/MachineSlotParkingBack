@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from pydantic import BaseModel
+from starlette import status
 from ultralytics import YOLO
 from PIL import Image
 import io
@@ -47,11 +48,12 @@ async def detect_objects(
         detections = []
         for result in results:
             for box in result.boxes:
-                detections.append({
-                    "class": result.names[int(box.cls[0])],
-                    "confidence": float(box.conf[0]),
-                    "box": [float(x) for x in box.xyxy[0].tolist()]
-                })
+                if result.names[int(box.cls[0])] == "cars":
+                    detections.append({
+                        "class": result.names[int(box.cls[0])],
+                        "confidence": float(box.conf[0]),
+                        "box": [float(x) for x in box.xyxy[0].tolist()]
+                    })
 
         return {"detections": detections}
 
