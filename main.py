@@ -7,6 +7,10 @@ import io
 import os
 from fastapi.middleware.cors import CORSMiddleware
 
+
+# only use if you have GPU NVIDIA
+#pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
 # Inicializar la app
 app = FastAPI()
 
@@ -41,9 +45,8 @@ async def detect_objects(
             source=image,
             conf=settings.conf_thres,
             iou=settings.iou_thres,
-            #device=0  # Usa la GPU si está disponible
+            device=0  # Usa la GPU si está disponible
         )
-
         # Convertir los resultados en un formato JSON legible
         detections = []
         for result in results:
@@ -59,4 +62,5 @@ async def detect_objects(
 
 
     except Exception as ex:
+        print(str(ex))
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(ex))
