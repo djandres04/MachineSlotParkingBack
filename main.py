@@ -23,7 +23,7 @@ app.add_middleware(
 )
 
 # Cargar el modelo entrenado
-model = YOLO("best.pt")
+model = YOLO("weight/v1440-100/best.pt")
 
 # Modelo para configuraciones
 class DetectionSettings(BaseModel):
@@ -51,13 +51,12 @@ async def detect_objects(
         detections = []
         for result in results:
             for box in result.boxes:
-                if result.names[int(box.cls[0])] == "cars":
+                if result.names[int(box.cls[0])] == "slot-parking-model - v11 2024-11-19 11-48am":
                     detections.append({
-                        "class": result.names[int(box.cls[0])],
+                        "class": "car",
                         "confidence": float(box.conf[0]),
                         "box": [float(x) for x in box.xyxy[0].tolist()]
                     })
-
         return {"detections": detections}
 
 
